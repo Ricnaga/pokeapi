@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { IFetchBase, onFetch } from "./fetcher";
 
 const useClientBase = <T = undefined>() => {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [data, setData] = useState<T>();
 
   const onLoadingIsOff = () => setIsLoading(false);
@@ -20,10 +20,12 @@ const useClientBase = <T = undefined>() => {
 type UseFetchQueryType = Omit<IFetchBase, "method">;
 
 export const useFetchQuery = <T = undefined>(payload: UseFetchQueryType) => {
-  const { data, isLoading, onLoadingIsOff, setData } = useClientBase<T>();
+  const { data, isLoading, onLoadingIsOn, onLoadingIsOff, setData } =
+    useClientBase<T>();
 
   useEffect(() => {
     (async () => {
+      onLoadingIsOn();
       const response: T = await onFetch(payload)
         .then((response) => {
           return response.json();
@@ -37,20 +39,16 @@ export const useFetchQuery = <T = undefined>(payload: UseFetchQueryType) => {
   return { data, isLoading };
 };
 
-type UseFetchLazyQueryType = UseFetchQueryType;
+type GetDataType = UseFetchQueryType;
 
-type GetDataType = Omit<UseFetchLazyQueryType, "endpoint">;
-
-export const useLazyFetchQuery = <T = undefined>(
-  payload: UseFetchLazyQueryType
-) => {
-  const { endpoint, ...rest } = payload;
-
+export const useLazyFetchQuery = <T = undefined>() => {
   const { data, isLoading, onLoadingIsOff, setData } = useClientBase<T>();
 
-  const getData = async (data: GetDataType = {}) => {
+  const getData = async (payload: GetDataType) => {
+    const { endpoint, ...rest } = payload;
+
     const response: T = await onFetch({
-      ...(!data || !data.params ? rest : data),
+      ...rest,
       endpoint,
     })
       .then((response) => {
