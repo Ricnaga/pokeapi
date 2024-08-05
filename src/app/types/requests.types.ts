@@ -1,3 +1,11 @@
-export type Params = Record<string, string>
+export type Params = Record<string, string> & {
+  // limit: pagesize
+  offset?: string;
 
-export type Pagination = unknown
+  // offset: previous/nextPage
+  limit?: string;
+};
+
+export type Pagination<T = unknown> = {
+  results: Array<T>;
+};
