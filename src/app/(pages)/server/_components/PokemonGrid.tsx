@@ -30,7 +30,7 @@ export function PokemonGrid(props: PokemonGridProps) {
         ))}
       </div>
       <div className="mt-4 grid grid-cols-1 justify-items-center">
-        <PokemonImage src={source} />
+        {source && <PokemonImage src={source} />}
       </div>
     </>
   );

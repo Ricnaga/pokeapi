@@ -24,8 +24,8 @@ export const useFetchQuery = <T = undefined>(payload: UseFetchQueryType) => {
     useClientBase<T>();
 
   useEffect(() => {
+    onLoadingIsOn();
     (async () => {
-      onLoadingIsOn();
       const response: T = await onFetch(payload)
         .then((response) => {
           return response.json();
